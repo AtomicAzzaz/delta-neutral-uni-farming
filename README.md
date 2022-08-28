@@ -36,7 +36,7 @@ Let's compute our benefit to the first order (without considering any fees):
 $$\varepsilon = \Lambda(t+1) - \Lambda(t) = \rho(t+1) - \rho(t) + \chi(t+1) - \chi(t) = \varepsilon_{\rho} - \varepsilon_{\chi}$$
 $$\varepsilon_{\rho} = (Q_t(t)+dQ_t)(P(t)+dP) - Q_t(t)P(t)+ dQ_s\simeq Q_t(t)dP + P(t)dQ_t + dQ_s =dP\sqrt{\frac{k}{P(t)}}$$
 In the same manner, we find :
-$$\varepsilon_{\chi} =-dP\sqrt{\frac{k}{P(t)}}$$
+$$\varepsilon_{\chi} =-dP\sqrt{\frac{k}{P(t)}} = -\varepsilon_{\rho} $$
 $$\boxed{\varepsilon_{} = 0 } \text{ to the first order.}$$
 
 By closing the short position, we find ourselves in the same context as when we started, and can reiterate. This strategy is indeed market neutral, and while not losing money due to market exposure we are able to collect pool fees and funding rate fees if positive (which is often the case on crypto assets!)

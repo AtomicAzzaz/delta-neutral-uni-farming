@@ -17,37 +17,86 @@ $P$ the price of a token T in stablecoin S\
 We have the following (cf UniswapV2 [whitepaper](https://uniswap.org/whitepaper.pdf)):\
 $Q_s * Q_t = k$ with $k$ constant\
 $P = Q_s / Q_t$\
-Those equations hold with $Qs$ and $Qt$ being the amount redeemable by a single liquidity provider (with, of course, another $k$). We can solve for $Q_t$ and $Q_s$:  
-$Q_t = \sqrt{\frac{k}{P}}\\
-Q_s = \sqrt{k*P}$.\
+Those equations hold with $Qs$ and $Qt$ being the amount redeemable by a single liquidity provider (with, of course, another $k$). We can solve for $Q_t$ and $Q_s$: 
+
+$\boxed{Q_t = \sqrt{\frac{k}{P}}}$ and 
+$\boxed{Q_s = \sqrt{k*P}}$.
+
  Thus, by shorting the non-constant amount $\sqrt{\frac{k}{P}}$ of token T we become market neutral, while profiting from fees.
 
 ### Proof
-Let's introduce time canonically, and let a unit of time pass. We must not gain/lose directly from price variations.
 
+We enter the pool a time $t$ with a quantity $Q_s(t)$ of stablecoin $S$ and $Q_t(t)$ of token $T$, at a price $P(t)$.\
+At the same time, we open a short position  of $q_{short}=\sqrt{\frac{k}{P(t)}}$ tokens T at price $P(t)$. 
+
+The portefolio value in dollars at a time $\tau$ is:
 $
-P(t+1) = P(t) + dP$
+\Lambda(\tau) = \rho(\tau) + \chi(\tau)$
 
-$Q_s(t+1)  = \sqrt{kP(t+1)} = \sqrt{k(P(t) + dP)} = Q(s) * \sqrt{1 + k dP}$
+
+with $\rho(\tau) = Q_t(\tau)P(\tau) + Q_s(\tau)$ the value in dollars of the pool position \
+and $\chi(\tau) =q_{short}(2P(t) -P(\tau)) $ the value in dollars of the short position
+
+Let a unit of time pass.
+
+$P(t+1) = P(t) + dP$
+
+$Q_s(t+1)  = 
+\sqrt{kP(t+1)} = 
+\sqrt{k(P(t) + dP)} = 
+Q_s(t) * \sqrt{1 + \frac{dP}{P(t)}}$
 
 First order development:
 
 $
-Q_s(t+1) \simeq Q_s(t) * (1 + \frac{1}{2}kdP) \implies dQ_s = \frac{1}{2}Q_s(t)kdP
+Q_s(t+1) 
+\simeq Q_s(t) * (1 + \frac{1}{2}\frac{dP}{P(t)}) 
+\implies \boxed{dQ_s = \frac{1}{2} dP\sqrt{\frac{k}{P(t)}}}
 $
 
 And we also have
 
-$Q_t(t+1) = \frac{Q_s(t+1)}{P(t+1)} = \frac{Q_s(t)+dQ_s}{P(t)+dP} = \frac{Q_s(t)}{P(t)}  \frac{1}{1+\frac{dP}{P(t)}} + \frac{dQ_s}{P(t)}  \frac{1}{1+\frac{dP}{P(t)}}
+$Q_t(t+1) = 
+\frac{Q_s(t+1)}{P(t+1)} = 
+\frac{Q_s(t)+dQ_s}{P(t)+dP} = 
+\frac{Q_s(t)}{P(t)}  \frac{1}{1+\frac{dP}{P(t)}} + \frac{dQ_s}{P(t)}  \frac{1}{1+\frac{dP}{P(t)}}
 $
 
 First order development:
 
-$Q_t(t+1)\simeq (Q_t(t)+ \frac{dQ_s}{P(t)}) * (1 - \frac{dP}{P(t)}) \simeq Q_t(t) + \frac{dQ_s - Q_t(t)dP}{P(t)}  $
+$Q_t(t+1)
+\simeq (Q_t(t)+ \frac{dQ_s}{P(t)}) * (1 - \frac{dP}{P(t)}) 
+\simeq Q_t(t) + \frac{dQ_s - Q_t(t)dP}{P(t)} 
+\implies \boxed{dQ_t = - \frac{1}{2}\frac{dP\sqrt{\frac{k}{P(t)}}}{P(t)}}$
+
+
+Let's compute our benefit to the first order (without considering any fees):
+
+$
+\varepsilon = \Lambda(t+1) - \Lambda(t) = 
+\rho(t+1) - \rho(t) + \chi(t+1) - \chi(t) = 
+\varepsilon_{\rho} - \varepsilon_{\chi}$
+
+$
+\varepsilon_{\rho} = (Q_t(t)+dQ_t)(P(t)+dP) - Q_t(t)P(t)+ dQ_s
+\simeq Q_t(t)dP + P(t)dQ_t + dQ_s$
+
+$
+ \varepsilon_{\rho} =dP\sqrt{\frac{k}{P(t)}}
+$
+
+In the same manner, we find :
+
+$
+\varepsilon_{\chi} =-dP\sqrt{\frac{k}{P(t)}}
+$
 
 
 
+$
+\boxed{\varepsilon_{} = 0 }$ To the first order. 
 
+By closing the short position, we find ourselves in the same context as when we started, and can reiterate. This strategy is indeed market neutral, and while not losing money due to market exposure we are able to collect pool fees and funding rate fees if positive (which is often the case on crypto assets!)
 
 
 

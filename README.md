@@ -65,6 +65,19 @@ As said, if the volatility of the underlying asset increases, the strategy becom
 ![image info](./img/high_vol.png)
 ### Historical prices
 
-## Openings
+We will try to confirm those observations against reality.
+First, let's benchmark the startegy on a relative low-volatility asset such as BTC on the two 8 months of 2022 with the same APR (pool & funding rates):
+![image info](./img/hist_low_vol.png)
+9.2% ROI an 8 month which is around 14% YoY. This is extremely satisfying but we need to take in consideration that finding a 20% APR pool on BTC/USDC might be really specific/hard. Moreover, the APR of a pool is varying during the year. Note: I made this program in march and tested BTC ROI for the 2 first month of 2022 (around 2.1%). This benchmark is thus really fair and works on real market conditions, even during a big krash.
 
-One may focus on token/token pools. There might be interesting positively correlated pairs where the pools is thus less exposed to market movements. Furthermore, having two shorts implies the earning of two funding rates fees.
+What about a more volatile asset such as AVAX?
+![image info](./img/hist_high_vol.png)
+It is still profitable!
+
+## Conclusion & Openings
+
+This strategy proves to be profitable. We need to find an asset highly traded to have great pool APRs, with a small dilution so it's not too shorted and funding rates are positive (and interesting), and which is not too volatile. We could try to benchmark a list of asset using real APRs data from Uniswap/TraderJoe for example - which was not done here.
+
+Also, the ROI graph can be misleading: the program is not closing the short position at each time step but only rebalancing the position (adding/closing small amounts instead of full close then full open) to optimize exchange fees (that depend on order size). So even if the graph went negative, it doesn't mean that the strategy was unprofitable at a time because the short position was not close, and previous short gains were not TPed.
+
+Finally we may focus on token/token pools. There might be interesting positively correlated pairs where the pools is thus less exposed to market movements and so volatility matters less. Furthermore, having two shorts implies the earning of two funding rates fees.

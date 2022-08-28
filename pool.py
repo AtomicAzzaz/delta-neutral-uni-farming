@@ -281,13 +281,13 @@ class Portfolio:
 def benchmarkOnHistoricalData():
 
     start = 1641073359
-    end = 1646170959
-    prices = getPriceHistorical(start, end, "1d", "BTCUSDT")
+    end = 1659326400
+    prices = getPriceHistorical(start, end, "1d", "AVAXUSDT")
 
     n = len(prices) - 1
     k = 1
 
-    pf = Portfolio(prices, fundingRateStep=0.036/(365*k), APRstep=0.3/(365*k), mode=1)
+    pf = Portfolio(prices, fundingRateStep=0.08/(365*k), APRstep=0.20/(365*k), mode=1)
     pf.simulation(n, 1)
 
 
@@ -301,4 +301,4 @@ def startStrategy():
     pf = Portfolio([], initPrice, initBTCinPool=10, fundingRateStep=0.0002, APRstep = 0.0008, mode=2)
     pf.bot()
 
-benchmarkOnSimulatedData()
+benchmarkOnHistoricalData()

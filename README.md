@@ -25,7 +25,7 @@ Thus, by shorting the non-constant amount $\sqrt{\frac{k}{P}}$ of token T we bec
 <h3>Proof</h3>
 We enter the pool a time $t$ with a quantity $Q_s(t)$ of stablecoin $S$ and $Q_t(t)$ of token $T$, at a price $P(t)$.\
 At the same time, we open a short position  of $q_{short}=\sqrt{\frac{k}{P(t)}}$ tokens T at price $P(t)$.
-The portefolio value in dollars at a time $\tau$ is $\Lambda(\tau) = \rho(\tau) + \chi(\tau)$ with $\rho(\tau) = Q_t(\tau)P(\tau) + Q_s(\tau)$ the value in dollars of the pool position and  $\chi(\tau) =q_{short}(2P(t) -P(\tau))$ the value in dollars of the short position. Let a unit of time pass.
+The porefolio value in dollars at a time $\tau$ is $\Lambda(\tau) = \rho(\tau) + \chi(\tau)$ with $\rho(\tau) = Q_t(\tau)P(\tau) + Q_s(\tau)$ the value in dollars of the pool position and  $\chi(\tau) =q_{short}(2P(t) -P(\tau))$ the value in dollars of the short position. Let a unit of time pass.
 $$P(t+1) = P(t) + dP$$
 Then, to the first oder:
 $$Q_s(t+1)  = \sqrt{kP(t+1)} = \sqrt{k(P(t) + dP)} =Q_s(t) * \sqrt{1 + \frac{dP}{P(t)}} \simeq Q_s(t) * (1 + \frac{1}{2}\frac{dP}{P(t)}) \implies \boxed{dQ_s = \frac{1}{2} dP\sqrt{\frac{k}{P(t)}}}$$
@@ -43,7 +43,7 @@ By closing the short position, we find ourselves in the same context as when we 
 
 ## Implementation
 
-To benchmark this strategy, I implemented it in python (`pool.py`). It is possible to use two types of benchmarking: a benchmark on mathematically generated prices, and a benchmark on real historical data. Price variation at each time step are modelized by a normal distribution with a set standard deviation (the "volatility"). To run a simulation on generated prices, one must create a Portefolio object with the value of APR and fundingRate by time step to be benchmark, with mode=0. Then one must call `simulation()` method of the PF object with the number of time step, and how often should the short position be rebalanced. For the historical data simulation, one must first gather the prices data using `getPriceHistorical()` with currency, start date and end date as parameters before using it on the creation of the PF object with mode=1 this time.
+To benchmark this strategy, I implemented it in python (`pool.py`). It is possible to use two types of benchmarking: a benchmark on mathematically generated prices, and a benchmark on real historical data. Price variation at each time step are modelized by a normal distribution with a set standard deviation (the "volatility"). To run a simulation on generated prices, one must create a Portfolio object with the value of APR and fundingRate by time step to be benchmark, with mode=0. Then one must call `simulation()` method of the PF object with the number of time step, and how often should the short position be rebalanced. For the historical data simulation, one must first gather the prices data using `getPriceHistorical()` with currency, start date and end date as parameters before using it on the creation of the PF object with mode=1 this time.
 mode=2 is used for an actual implementation of this strategy in rela time using Binance API. NOTE: API changed, the functions of the bot need to be re implemented in `bot.py`\
 Please see examples at the end of `pool.py`.
 

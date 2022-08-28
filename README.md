@@ -45,7 +45,7 @@ By closing the short position, we find ourselves in the same context as when we 
 
 To benchmark this strategy, I implemented it in python (`pool.py`). It is possible to use two types of benchmarking: a benchmark on mathematically generated prices, and a benchmark on real historical data. Price variation at each time step are modelized by a normal distribution with a set standard deviation (the "volatility"). To run a simulation on generated prices, one must create a Portefolio object with the value of APR and fundingRate by time step to be benchmark, with mode=0. Then one must call `simulation()` method of the PF object with the number of time step, and how often should the short position be rebalanced. For the historical data simulation, one must first gather the prices data using `getPriceHistorical()` with currency, start date and end date as parameters before using it on the creation of the PF object with mode=1 this time.
 mode=2 is used for an actual implementation of this strategy in rela time using Binance API. NOTE: API changed, the functions of the bot need to be re implemented in `bot.py`\
-Please see exampe at the end of `pool.py`.
+Please see examples at the end of `pool.py`.
 
 ## Results
 

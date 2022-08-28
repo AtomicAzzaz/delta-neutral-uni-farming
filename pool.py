@@ -25,7 +25,7 @@ def getPriceHistorical(start, end, interval, currency="AVAXUSDT"):
 
 class Portfolio:
 
-    def __init__(self, prices, initPrice=35000, initBTCinPool=1, dailyVol=0.065, fundingRateStep=0.0001, makerFees=0.0002, APRstep=0.0008, mode=0):
+    def __init__(self, prices, initPrice=35000, initBTCinPool=1, dailyVol=0.085, fundingRateStep=0.0001, makerFees=0.0002, APRstep=0.0008, mode=0):
 
         if mode == 0:                   
             self.price = initPrice      # FOR SIMULATION  
@@ -168,7 +168,7 @@ class Portfolio:
         fig, axs = plt.subplots(2, 2)
 
         axs[0, 0].plot(times, prices, color = 'black')
-        axs[0, 0].set_title('Price of BTC')
+        axs[0, 0].set_title('Price of Token')
 
         ax2 = axs[0, 0].twinx()
         ax2.plot(times, impermanentLoss, color = 'pink', label='IL')
@@ -279,6 +279,7 @@ class Portfolio:
 
 
 def benchmarkOnHistoricalData():
+
     start = 1641073359
     end = 1646170959
     prices = getPriceHistorical(start, end, "1d", "BTCUSDT")
@@ -291,7 +292,7 @@ def benchmarkOnHistoricalData():
 
 
 def benchmarkOnSimulatedData():
-    pf = Portfolio([], fundingRateStep=0.036/(365), APRstep=0.3/(365), mode=0)
+    pf = Portfolio([], fundingRateStep=0.08/(365), APRstep=0.20/(365), mode=0)
     pf.simulation(365, 1)
 
 

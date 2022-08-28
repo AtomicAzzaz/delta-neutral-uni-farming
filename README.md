@@ -31,7 +31,7 @@ $$P(t+1) = P(t) + dP$$
 Then, to the first oder:
 $$Q_s(t+1)  = \sqrt{kP(t+1)} = \sqrt{k(P(t) + dP)} =Q_s(t) * \sqrt{1 + \frac{dP}{P(t)}} \simeq Q_s(t) * (1 + \frac{1}{2}\frac{dP}{P(t)}) \implies \boxed{dQ_s = \frac{1}{2} dP\sqrt{\frac{k}{P(t)}}}$$
 And we also have
-$$Q_t(t+1) = \frac{Q_s(t+1)}{P(t+1)} = \frac{Q_s(t)+dQ_s}{P(t)+dP} = (\frac{Q_s(t)+dQ_s}{P(t)}  \frac{1}{1+\frac{dP}{P(t)}}\simeq (Q_t(t)+ \frac{dQ_s}{P(t)}) * (1 - \frac{dP}{P(t)})\simeq Q_t(t) + \frac{dQ_s - Q_t(t)dP}{P(t)} \implies \boxed{dQ_t = - \frac{1}{2}\frac{dP\sqrt{\frac{k}{P(t)}}}{P(t)}}$$
+$$Q_t(t+1) = \frac{Q_s(t+1)}{P(t+1)} = (\frac{Q_s(t)+dQ_s}{P(t)})  \frac{1}{1+\frac{dP}{P(t)}}\simeq (Q_t(t)+ \frac{dQ_s}{P(t)}) * (1 - \frac{dP}{P(t)})\simeq Q_t(t) + \frac{dQ_s - Q_t(t)dP}{P(t)} \implies \boxed{dQ_t = - \frac{1}{2}\frac{dP\sqrt{\frac{k}{P(t)}}}{P(t)}}$$
 Let's compute our benefit to the first order (without considering any fees):
 $$\varepsilon = \Lambda(t+1) - \Lambda(t) = \rho(t+1) - \rho(t) + \chi(t+1) - \chi(t) = \varepsilon_{\rho} - \varepsilon_{\chi}$$
 $$\varepsilon_{\rho} = (Q_t(t)+dQ_t)(P(t)+dP) - Q_t(t)P(t)+ dQ_s\simeq Q_t(t)dP + P(t)dQ_t + dQ_s =dP\sqrt{\frac{k}{P(t)}}$$

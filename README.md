@@ -51,7 +51,7 @@ Please see examples at the end of `pool.py`.
 
 ### Simulated prices
 
-After playing with the parameters (I won't do a statistical analysis of their impact), we notice that the most important parameter is the volatility of the underlying asset. It is understandable because volatility directly impact the validity of our infinitesimal calculus - costing us a non negligeable about of money. 
+After playing with the parameters (I won't do a statistical analysis of their impact), we notice that the most important parameter is the volatility of the underlying asset. It is understandable because volatility directly impact the validity of our infinitesimal calculus - costing us a non negligeable amount of money. 
 
 With a low daily volatility we obtain great results (pool APR = 20%, fundings rates APR = 8%)
 ![image info](./img/low_vol_low_il.png)

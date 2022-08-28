@@ -7,7 +7,7 @@ from bot import *
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
-def getPriceHistorical(start, end, interval):
+def getPriceHistorical(start, end, interval, currency="AVAXUSDT"):
 
     url =  "https://fapi.binance.com"
     prices = []
@@ -15,31 +15,32 @@ def getPriceHistorical(start, end, interval):
     end = end * 1000
     start, end = str(start), str(end)
 
-    payload = {'symbol': 'AVAXUSDT', 'interval': interval ,  'startTime': start, 'endTime' : end, 'limit': 1500}
+    payload = {'symbol': currency, 'interval': interval ,  'startTime': start, 'endTime' : end, 'limit': 1500}
     data = requests.get(url + "/fapi/v1/markPriceKlines", params=payload)
     json1 = data.json()
     for x in json1:
         prices.append(float(x[1]))
 
-
     return prices
 
 class Portfolio:
 
-    def __init__(self, prices, initPrice=35000, initBTCinPool=1, dailyVol=0.065, fundingRateStep=0.0001, makerFees=0.0002, APRstep=0.0008):
+    def __init__(self, prices, initPrice=35000, initBTCinPool=1, dailyVol=0.065, fundingRateStep=0.0001, makerFees=0.0002, APRstep=0.0008, mode=0):
 
-        # self.prices = prices         FOR BINANE HISTORICAL PRICE
-        # self.ind = 0
-        # self.price = self.prices[0]
-        # initPrice = self.price
+        if mode == 0:                   
+            self.price = initPrice      # FOR SIMULATION  
 
-        self.price = initPrice     # FOR SIMULATION     
+
+        elif mode == 1:
+            self.prices = prices        #FOR BINANCE HISTORICAL DATA    
+            self.ind = 0
+            self.price = self.prices[0]
+            initPrice = self.price  
 
         self.dailyVol = dailyVol
-
+        self.mode = mode
         self.stepFundingRate = fundingRateStep
         self.makerFees = makerFees
-
         self.initialInvest = initBTCinPool * initPrice
         self.stepPoolReturn = APRstep
         self.k = initPrice * initBTCinPool * initBTCinPool
@@ -100,15 +101,18 @@ class Portfolio:
     
     def newPrice(self):
 
-        # self.price = getPrice()
-        # return self.price
-        # self.ind += 1           FOR BINANCE SIMULATION
-        # self.price = self.prices[self.ind]
-        # return self.price
+        if self.mode == 0:
+            newPrice = self.price * (1 + np.random.normal(0, self.dailyVol))  #  FOR SIMULATION
+            self.price = newPrice
+            return newPrice
+        elif self.mode == 1:
+            self.ind += 1         # FOR BINANCE HISTORICAL DATA
+            self.price = self.prices[self.ind]
+            return self.price
+        else:
+            self.price = getPrice()
+            return self.price
 
-        newPrice = self.price * (1 + np.random.normal(0, self.dailyVol))  #  FOR SIMULATION
-        self.price = newPrice
-        return newPrice
 
     def simulation(self, nbStep, optimEach, plot=True):
 
@@ -274,21 +278,26 @@ class Portfolio:
 
 
 
+def benchmarkOnHistoricalData():
+    start = 1641073359
+    end = 1646170959
+    prices = getPriceHistorical(start, end, "1d", "BTCUSDT")
 
-# start = 1641073359
-# end = 1646170959
-# prices = getPrice(start, end, "1d")
+    n = len(prices) - 1
+    k = 1
 
-
-# n = len(prices) - 1
-# k = 1
-# pf = Portfolio(prices, fundingRateStep=0.036/(365*k), APRstep=0.3/(365*k))
-# pf.simulation(n, 1)
-
-pf = Portfolio([], fundingRateStep=0.036/(365), APRstep=0.3/(365))
-pf.simulation(365, 1)
+    pf = Portfolio(prices, fundingRateStep=0.036/(365*k), APRstep=0.3/(365*k), mode=1)
+    pf.simulation(n, 1)
 
 
-# initPrice = getPrice()
-# pf = Portfolio([], initPrice, initBTCinPool=10, fundingRateStep=0.0002, APRstep = 0.0008)
-# pf.bot()
+def benchmarkOnSimulatedData():
+    pf = Portfolio([], fundingRateStep=0.036/(365), APRstep=0.3/(365), mode=0)
+    pf.simulation(365, 1)
+
+
+def startStrategy():
+    initPrice = getPrice()
+    pf = Portfolio([], initPrice, initBTCinPool=10, fundingRateStep=0.0002, APRstep = 0.0008, mode=2)
+    pf.bot()
+
+benchmarkOnSimulatedData()

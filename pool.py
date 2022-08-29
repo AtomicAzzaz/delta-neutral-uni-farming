@@ -59,9 +59,9 @@ class Portfolio:
 
     def modifyShort(self, price, amount):
         if amount > 0:
-             self.openShort(price, amount)
-        elif amount < 0:
-             self.closeShort(price, amount)
+            self.openShort(price, amount)
+        else:
+            self.closeShort(price, amount)
 
     def openShort(self, openPrice, amount):
         amount = np.abs(amount)
@@ -76,6 +76,10 @@ class Portfolio:
         self.totalShortPNL += -(closePrice - self.averageOpenPrice) * amount
         self.totalShortingFees +=  - closePrice * amount * self.makerFees
         self.totalOpenShortAmount -= amount
+
+    def payShortFees(self, price, amount):
+        amount = np.abs(amount)
+        self.totalShortingFees += - price * amount * self.makerFees
 
 
     def totalPoolAmount(self):
@@ -118,7 +122,7 @@ class Portfolio:
 
         times = [i for i in range(nbStep)]
         prices = []
-        shortPNL = []
+        shortVirtualPNL = []
         fundingFees = []
         shortingFees = []
         poolMoney = []
@@ -134,7 +138,7 @@ class Portfolio:
                 self.updateShortPosition()
 
             prices.append(self.price)
-            shortPNL.append(self.totalShortPNL/(2*self.k))
+            shortVirtualPNL.append((self.totalShortPNL-(self.price - self.averageOpenPrice) * self.BTCinPool)/(2*self.k)) #we simulate the short closing to TP at time t - if not, our short PNL doesn't reflect the actual edging
             fundingFees.append(self.totalFundingFees/(2*self.k))
             shortingFees.append(self.totalShortingFees/(2*self.k))
             poolMoney.append(self.totalPoolAmount()/(2*self.k) - 1)
@@ -150,16 +154,16 @@ class Portfolio:
         times.append(nbStep)
         poolMoney.append(self.totalPoolAmount()/(2*self.k) - 1)
         prices.append(self.price)
-        shortPNL.append(self.totalShortPNL/(2*self.k))
+        shortVirtualPNL.append(self.totalShortPNL/(2*self.k))
         fundingFees.append(self.totalFundingFees/(2*self.k))
         shortingFees.append(self.totalShortingFees/(2*self.k))
         poolFees.append(self.totalPoolFees/(2*self.k))
         impermanentLoss.append(self.totalPoolAmount()/((prices[0]+self.price) * self.k / prices[0]) - 1)
 
-        totalGain = [sum(x) for x in zip(shortPNL, fundingFees, shortingFees, poolMoney, poolFees)]
+        totalGain = [sum(x) for x in zip(shortVirtualPNL, fundingFees, shortingFees, poolMoney, poolFees)]
 
         if plot:
-            self.plot(times, poolMoney, prices, shortPNL, fundingFees, shortingFees, poolFees, impermanentLoss, nbStep, totalGain)
+            self.plot(times, poolMoney, prices, shortVirtualPNL, fundingFees, shortingFees, poolFees, impermanentLoss, nbStep, totalGain)
 
         return totalGain
 
@@ -167,33 +171,32 @@ class Portfolio:
       
         fig, axs = plt.subplots(2, 2)
 
-        axs[0, 0].plot(times, prices, color = 'black')
-        axs[0, 0].set_title('Price of Token')
-
+        axs[0, 0].plot(times, prices, color = 'black', label='Price')
+        axs[0, 0].set_title('Price & IL')
+        axs[0, 0].set_xlabel('Days')
+        axs[0, 0].set_ylabel('USD')
+        axs[0, 0].legend()
         ax2 = axs[0, 0].twinx()
         ax2.plot(times, impermanentLoss, color = 'pink', label='IL')
-        ax2.legend()
+        ax2.set_ylabel('Percentage')
+        ax2.legend(loc='lower left')
  
 
-        if shortPNL[-1] < 0:
-            colorPNL = "red"
-        else:
-            colorPNL = 'green'
-
-        if poolMoney[-1] < 0:
-            colorPool = "red"
-        else:
-            colorPool = 'green'
+        colorPNL = "orange"
+ 
+        colorPool = 'green'
 
         if fundingFees[-1] < 0:
             colorFunding = "lightcoral"
         else:
             colorFunding = 'palegreen'
 
-        axs[1, 0].plot(times, shortPNL, color = colorPNL, label='Short PNL')
-        axs[1, 0].plot(times, poolMoney, color = colorPool, label = 'Pool money')
+        axs[1, 0].plot(times, shortPNL, color = colorPNL, label='Short position')
+        axs[1, 0].plot(times, poolMoney, color = colorPool, label = 'Pool position')
         axs[1, 0].plot(times, [sum(x) for x in zip(shortPNL, poolMoney,)], color = 'lightblue', label='Sum: '+ str(round((shortPNL[-1] + poolMoney[-1])*100, 1)) + '%')
-        axs[1, 0].set_title('Major Gains / Losses')
+        axs[1, 0].set_title('Losses due to non infinitesimality')
+        axs[1, 0].set_ylabel('Percentage')
+        axs[1, 0].set_xlabel('Days')
         axs[1, 0].legend()
 
         axs[1, 1].plot(times, poolFees, color = 'gold', label='poolFees')
@@ -201,11 +204,15 @@ class Portfolio:
         axs[1, 1].plot(times, fundingFees, color = colorFunding, label = 'fundingFees')
         axs[1, 1].plot(times, shortingFees, color = 'red', label = 'shortingFees')
         axs[1, 1].plot(times, [sum(x) for x in zip(shortingFees, fundingFees,poolFees)], color = 'lightblue', label='Sum: '+ str(round((shortingFees[-1] + fundingFees[-1] + poolFees[-1])*100, 1)) + '%')
-        axs[1, 1].set_title('Fees')
+        axs[1, 1].set_title('Fees earned & spent')
+        axs[1, 1].set_ylabel('Percentage')
+        axs[1, 1].set_xlabel('Days')
         axs[1, 1].legend()
         
         axs[0, 1].plot(times, totalGain, color = 'gold')
         axs[0, 1].set_title('Total ROI: '+ str(round(totalGain[-1]*100, 1)) + '%')
+        axs[0, 1].set_ylabel('Percentage')
+        axs[0, 1].set_xlabel('Days')
         plt.tight_layout(pad=1)
         plt.show()
 
@@ -282,7 +289,7 @@ def benchmarkOnHistoricalData():
 
     start = 1641073359
     end = 1659326400
-    prices = getPriceHistorical(start, end, "1d", "AVAXUSDT")
+    prices = getPriceHistorical(start, end, "1d", "BTCUSDT")
 
     n = len(prices) - 1
     k = 1

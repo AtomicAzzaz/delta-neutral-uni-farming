@@ -53,19 +53,20 @@ Please see examples at the end of `pool.py`.
 
 After playing with the parameters (I won't do a statistical analysis of their impact), we notice that the most important parameter is the volatility of the underlying asset. It is understandable because volatility directly impact the validity of our infinitesimal calculus - costing us a non negligeable amount of money. 
 
-With a low daily volatility we obtain great results (pool APR = 20%, funding rates APR = 8%)
+With a "low" crypto daily volatility (average daily movement = 4.5%, which is still high for cryptos) we obtain great results (pool APR = 20%, funding rates APR = 8%)
 ![image info](./img/low_vol_low_il.png)
-IL in pink is the Impermanent loss, in % (loss linked to providing liquidity in the pool VS just holding). Here, with close to no IL, rebalancing the short cost us only 15.3% which is greatly under our benefits (20+8 - shorting fees = 25%). So we obtain a great ROI YoY.
+IL in pink is the Impermanent loss, in % (loss linked to providing liquidity in the pool VS just holding). Here, with close to no IL, rebalancing the short cost us only 18.5% which is greatly under our benefits (20% nominal but more due to positive IL during the period, to 32%). So we obtain a great ROI YoY. Bottom left graph shows what it costs us to be market neutral. As we can see, the two lines are somewhat symmetric and it shows that our short position indeed counter balance our pool position (not perfectly due to dP not being enoughly small): market neutrality. Note: the cost of being market neutral is higher when price goes in an upward trend because our short position is "lagging" in a way that makes us lose money, but it's counter balanced by poolFees increasing due to our pool position increasing. It's the opposite when the trend is downward: it costs less to be market neutral, but pool fees are lower.
 
-This results hold with a higher IL showing that the strategy is indeed really market neutral:
+This result holds with a higher IL showing that the strategy doesn't rely on any market conditions:
 ![image info](./img/low_vol_high_il.png)
 
-As said, if the volatility of the underlying asset increases, the strategy becomes unprofitable. The relative error of our calculus become too important to be absorbed by the profits:
+As said, if the volatility of the underlying asset increases (average daily movement = 7% which is very high), the strategy becomes unprofitable. The relative error of our calculus become too important to be absorbed by the profits:
 ![image info](./img/high_vol.png)
-### Historical prices
+
+### Historical prices - Benchmark on real data 
 
 We will try to confirm those observations against reality.
-First, let's benchmark the startegy on a relative low-volatility asset such as BTC on the two 8 months of 2022 with the same APR (pool & funding rates):
+First, let's benchmark the startegy on a relative low-volatility crypto asset such as BTC on the 8 first months of 2022 with the same APR (pool & funding rates):
 ![image info](./img/hist_low_vol.png)
 9.2% ROI an 8 month which is around 14% YoY. This is extremely satisfying but we need to take in consideration that finding a 20% APR pool on BTC/USDC might be really specific/hard. Moreover, the APR of a pool is varying during the year. Note: I made this program in march and tested BTC ROI for the 2 first month of 2022 (around 2.1%). This benchmark is thus really fair and works on real market conditions, even during a big krash.
 
@@ -76,7 +77,5 @@ It is still profitable!
 ## Conclusion & Openings
 
 This strategy proves to be profitable. We need to find an asset highly traded to have great pool APRs, with a small dilution so it's not too shorted and funding rates are positive (and interesting), and which is not too volatile. We could try to benchmark a list of asset using real APRs data from Uniswap/TraderJoe for example - which was not done here.
-
-Also, the ROI graph can be misleading: the program is not closing the short position at each time step but only rebalancing the position (adding/closing small amounts instead of full close then full open) to optimize exchange fees (that depend on order size). So even if the graph went negative, it doesn't mean that the strategy was unprofitable at a time because the short position was not close, and previous short gains were not TPed.
 
 Finally we may focus on token/token pools. There might be interesting positively correlated pairs where the pools is thus less exposed to market movements and so volatility matters less. Furthermore, having two shorts implies the earning of two funding rates fees.

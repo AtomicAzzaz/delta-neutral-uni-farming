@@ -1,6 +1,8 @@
 # On uniswap delta neutral farming
 
-This python project aims to build, analyze, benchmark, and run a delta neutral farming strategy on UniswapV2 and similar forks.
+This python project aims to build, analyze, benchmark, and run a delta neutral farming strategy on UniswapV2 and similar forks.  
+Note: this needs an update with a BS model
+
 
 ## Motivation
 
@@ -22,7 +24,7 @@ We can solve for $Q_t$ and $Q_s$:
 $\boxed{Q_t = \sqrt{\frac{k}{P}}}$ and 
 $\boxed{Q_s = \sqrt{k*P}}$.\
 Thus, by shorting the non-constant amount $\sqrt{\frac{k}{P}}$ of token T we become market neutral, while profiting from fees.
-<h3>Proof</h3>
+### Proof
 We enter the pool a time $t$ with a quantity $Q_s(t)$ of stablecoin $S$ and $Q_t(t)$ of token $T$, at a price $P(t)$.
 At the same time, we open a short position  of $q_{short}=\sqrt{\frac{k}{P(t)}}$ tokens T at price $P(t)$.
 The porefolio value in dollars at a time $\tau$ is $\Lambda(\tau) = \rho(\tau) + \chi(\tau)$ with $\rho(\tau) = Q_t(\tau)P(\tau) + Q_s(\tau)$ the value in dollars of the pool position and  $\chi(\tau) =q_{short}(2P(t) -P(\tau))$ the value in dollars of the short position. Let a unit of time pass.

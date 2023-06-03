@@ -1,7 +1,6 @@
 # On uniswap delta neutral farming
 
 This python project aims to build, analyze, benchmark, and run a delta neutral farming strategy on UniswapV2 and similar forks.  
-Note: this needs an update with a BS model
 
 
 ## Motivation
